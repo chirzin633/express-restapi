@@ -43,9 +43,17 @@ const getUserById = async (req, res) => {
 const createNewUser = async (req, res) => {
     const payload = req.body;
 
+    if (!payload.email || !payload.name || !payload.address) {
+        return res.status(400).json({
+            message: "Anda mengirimkan data yg salah",
+            data: null
+        });
+    }
+
     try {
+
         await usersModel.createUser(payload);
-        res.json({
+        res.status(201).json({
             message: 'Create new user success',
             data: payload
         });
@@ -61,8 +69,23 @@ const updateUser = async (req, res) => {
     const payload = req.body;
     const { id } = req.params;
 
+    if (!payload.email || !payload.name || !payload.address) {
+        return res.status(400).json({
+            message: "Anda mengirimkan data yg salah",
+            data: null
+        });
+    }
+
     try {
-        await usersModel.updateUser(payload, id);
+        const [data] = await usersModel.updateUser(payload, id);
+
+        if (data.affectedRows === 0) {
+            return res.status(404).json({
+                message: "User tidak ditemukan",
+                data: null
+            });
+        }
+
         res.json({
             message: "Update user success",
             data: {
@@ -82,8 +105,14 @@ const deleteUser = async (req, res) => {
     const { id } = req.params;
 
     try {
-
         const [data] = await usersModel.deleteUser(id)
+
+        if (data.affectedRows === 0) {
+            res.status(404).json({
+                message: "User tidak ditemukan",
+                data: null
+            });
+        }
         res.json({
             message: "Delete user success"
         });
