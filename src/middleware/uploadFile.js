@@ -1,14 +1,19 @@
 import multer from "multer";
+import fs from "fs";
 import path from "path";
+
+const uploadDir = path.join(process.cwd(), "public/images");
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true })
+}
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, 'public/images');
+        callback(null, uploadDir);
     },
     filename: (req, file, callback) => {
         const timestamp = new Date().getTime();
         const originalName = file.originalname;
-
         callback(null, `${timestamp}-${originalName}`)
     }
 });

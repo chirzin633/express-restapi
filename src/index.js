@@ -2,7 +2,7 @@ import express from 'express';
 import "dotenv/config";
 import userRoutes from './routes/routeUsers.js';
 import logRequest from './middleware/logs.js';
-import upload from './middleware/multer.js';
+import upload from './middleware/uploadFile.js';
 
 const app = express();
 const port = process.env.PORT;
